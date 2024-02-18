@@ -48,6 +48,6 @@ class NoteDAO @Inject()(protected val dbConfigProvider: DatabaseConfigProvider)
 
     def lastChanged = column[Timestamp]("last_changed")
 
-    def * = (id.?, name, password, lastChanged) <> ((Note.apply _).tupled, Note.unapply)
+    def * = (id, name, password, lastChanged) <> ((Note.apply _).tupled, Note.unapply)
   }
 }

@@ -11,7 +11,7 @@ class NoteUpdateLogService @Inject()(
                                       val noteUpdateLogRepository: NoteUpdateLogDAO
                                     ) {
 
-  def getHistoryLog(noteId: Option[Int] = None): Future[List[NoteUpdateLog]] = {
+  def getHistoryLog(noteId: Option[Int] = None): Future[Seq[NoteUpdateLog]] = {
     val foundHistoryLogs = noteId match {
       case Some(id) =>
         noteUpdateLogRepository.findByNoteId(id)

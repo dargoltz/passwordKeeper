@@ -83,7 +83,6 @@ class NoteService @Inject()(
     if (line.size != 3) throw new Exception("Многовато у вас столбцов")
     val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss")
     Note(
-      id = None,
       name = line.head,
       password = line(1),
       lastChanged = getTimeStamp(Some(LocalDateTime.parse(line(2), formatter)))
