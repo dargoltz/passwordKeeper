@@ -2,25 +2,17 @@ package repository
 
 import model.NoteUpdateLog
 
-@Singleton
-class NoteUpdateLogRepository extends DbContext {
-
-  import ctx._
-
-  private val noteUpdateLogs = quote(querySchema[NoteUpdateLog]("note_update_log"))
+class NoteUpdateLogRepository {
 
   def getAll: List[NoteUpdateLog] = {
-    run(
-      query[NoteUpdateLog]
-    )
+    Nil
   }
 
   def findByNoteId(noteId: Int): List[NoteUpdateLog] = {
-    run(noteUpdateLogs.filter(_.noteId == lift(noteId)))
+    Nil
   }
 
   def create(log: NoteUpdateLog): Unit = {
-    run(noteUpdateLogs.insertValue(lift(log)))
-  }
 
+  }
 }

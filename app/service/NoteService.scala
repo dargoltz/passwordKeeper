@@ -11,7 +11,6 @@ import javax.inject.Inject
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-@Singleton
 class NoteService @Inject()(
                              notesRepository: NoteRepository,
                              updateHistoryLogRepository: NoteUpdateLogRepository
