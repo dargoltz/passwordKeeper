@@ -23,7 +23,7 @@ class NoteService @Inject()(
     notesRepository.findAllByName(name)
   }
 
-  def create(note: Note): Future[Int] = {
+  def createNote(note: Note): Future[Int] = {
     notesRepository.create(note).flatMap { noteId =>
       updateHistoryLogRepository.create(
         NoteUpdateLog(0, noteId, "CREATE", getTimeStamp(), Some(note.password), None)
@@ -43,7 +43,7 @@ class NoteService @Inject()(
     }
   }
 
-  def deleteNote(id: Int): Unit = {
+  def deleteNote(id: Int): Future[Unit] = {
     notesRepository.getById(id).map { maybeFoundNote =>
       maybeFoundNote.foreach { foundNote =>
         notesRepository.delete(id).flatMap { _ =>
