@@ -2,19 +2,16 @@ package model
 
 import play.api.libs.json.{Format, JsResult, JsValue, Json}
 
+import java.sql.Timestamp
 import java.time.LocalDateTime
 
-case class Note(id: Option[Int] = None, name: String, password: String, lastChanged: LocalDateTime = LocalDateTime.now) {
+case class Note(id: Option[Int] = None, name: String, password: String, lastChanged: Timestamp = Timestamp.valueOf(LocalDateTime.now)) {
   def toList: List[String] = {
     List(id.toString, name, password, lastChanged.toString)
   }
 }
 
 object Note {
-  //  implicit val localDateTimeFormat: Format[LocalDateTime] = Format(
-  //    Reads.localDateTimeReads(DateTimeFormatter.ISO_DATE_TIME),
-  //    Writes.temporalWrites(DateTimeFormatter.ISO_DATE_TIME)
-  //  )
 
   implicit val format: Format[Note] = new Format[Note] {
     override def reads(json: JsValue): JsResult[Note] =

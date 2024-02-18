@@ -17,11 +17,11 @@ class NoteUpdateLogDAO @Inject()(protected val dbConfigProvider: DatabaseConfigP
   private val logs = lifted.TableQuery[NoteUpdateLogsTable]
 
 
-  def getAll: Future[Seq[NoteUpdateLog]] = {
+  def getAll: Future[List[NoteUpdateLog]] = {
     db.run(logs.result).map(NoteUpdateLogConverter.makeFromSeq)
   }
 
-  def findByNoteId(noteId: Int): Future[Seq[NoteUpdateLog]] = {
+  def findByNoteId(noteId: Int): Future[List[NoteUpdateLog]] = {
     db.run(logs.filter(_.noteId === noteId).result).map(NoteUpdateLogConverter.makeFromSeq)
   }
 
@@ -46,11 +46,11 @@ class NoteUpdateLogDAO @Inject()(protected val dbConfigProvider: DatabaseConfigP
   }
 
   private object NoteUpdateLogConverter {
-    def makeFromSeq(rows: Seq[(Int, Int, String, Timestamp, Option[String], Option[String])]): Seq[NoteUpdateLog] = {
+    def makeFromSeq(rows: Seq[(Int, Int, String, Timestamp, Option[String], Option[String])]): List[NoteUpdateLog] = {
       rows.map {
         case (id, noteId, action, changed, newPassword, oldPassword) =>
           NoteUpdateLog(Option(id), noteId, action, changed, newPassword, oldPassword)
-      }
+      }.toList
     }
   }
 }

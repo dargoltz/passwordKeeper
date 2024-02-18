@@ -1,10 +1,11 @@
 package service
 
 import model.{Note, NoteUpdateLog}
-import repository.{NoteRepository, NoteUpdateLogRepository}
+import repository.{NoteRepository, NoteUpdateLogDAO}
 import util.CSVHandler
 
 import java.io.File
+import java.sql.Timestamp
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import javax.inject.Inject
@@ -13,7 +14,7 @@ import scala.concurrent.Future
 
 class NoteService @Inject()(
                              notesRepository: NoteRepository,
-                             updateHistoryLogRepository: NoteUpdateLogRepository
+                             updateHistoryLogRepository: NoteUpdateLogDAO
                            ) {
 
   private val csvHandler = new CSVHandler()
@@ -25,7 +26,7 @@ class NoteService @Inject()(
   def createNote(note: Note): Unit = {
     notesRepository.createAndGetId(note) match {
       case Some(noteId) =>
-        updateHistoryLogRepository.create(NoteUpdateLog(None, noteId, "CREATE", LocalDateTime.now, Some(note.password), None))
+        updateHistoryLogRepository.create(NoteUpdateLog(None, noteId, "CREATE", note.lastChanged, Some(note.password), None))
     }
   }
 
@@ -33,7 +34,7 @@ class NoteService @Inject()(
     notesRepository.getById(id) match {
       case Some(foundNote) =>
         notesRepository.updatePasswordById(id, password)
-        updateHistoryLogRepository.create(NoteUpdateLog(None, id, "UPDATE", LocalDateTime.now, Some(password), Some(foundNote.password)))
+        updateHistoryLogRepository.create(NoteUpdateLog(None, id, "UPDATE", getTimeStamp(), Some(password), Some(foundNote.password)))
     }
   }
 
@@ -41,7 +42,7 @@ class NoteService @Inject()(
     notesRepository.getById(id) match {
       case Some(foundNote) =>
         notesRepository.delete(id)
-        updateHistoryLogRepository.create(NoteUpdateLog(None, id, "DELETE", LocalDateTime.now, None, Some(foundNote.password)))
+        updateHistoryLogRepository.create(NoteUpdateLog(None, id, "DELETE", getTimeStamp(), None, Some(foundNote.password)))
     }
   }
 
@@ -71,8 +72,12 @@ class NoteService @Inject()(
       id = None,
       name = line.head,
       password = line(1),
-      lastChanged = LocalDateTime.parse(line(2), formatter),
+      lastChanged = getTimeStamp(Some(LocalDateTime.parse(line(2), formatter)))
     )
+  }
+
+  private def getTimeStamp(dateTime: Option[LocalDateTime] = None): Timestamp = {
+    if (dateTime.isDefined) Timestamp.valueOf(dateTime.get) else Timestamp.valueOf(LocalDateTime.now)
   }
 
 }
