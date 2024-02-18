@@ -16,7 +16,7 @@ class NoteDAO @Inject()(protected val dbConfigProvider: DatabaseConfigProvider)
   private val notes = TableQuery[NotesTable]
 
   def create(note: Note): Future[Int] = {
-    db.run(notes += note)
+    db.run((notes returning notes.map(_.id)) += note)
   }
 
   def getAll: Future[Seq[Note]] = {
