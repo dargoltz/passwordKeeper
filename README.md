@@ -1,4 +1,4 @@
-This is PasswordKeeper - my first REST API on Scala
+This is PasswordKeeper - my first Json Rest Api on Scala
 
 This API allows you:
 - Perform CRUD operations on your password records.
