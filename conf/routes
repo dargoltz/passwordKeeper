@@ -4,7 +4,7 @@ POST        /new                       controllers.MainController.createNote()
 GET         /update_notes/             controllers.MainController.updateNote(id: Int, password: String )
 GET         /delete_notes/:id          controllers.MainController.deleteNote(id: Int)
 
-GET         /all_history/              controllers.MainController.getHistoryLogAll()
+GET         /history/all               controllers.MainController.getHistoryLogAll()
 GET         /history/:noteId           controllers.MainController.getHistoryLogByNoteId(noteId: Int)
 
 POST        /import_csv                controllers.MainController.importNotes()
