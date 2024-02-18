@@ -17,19 +17,19 @@ class NoteUpdateLogDAO @Inject()(protected val dbConfigProvider: DatabaseConfigP
   private val logs = lifted.TableQuery[NoteUpdateLogsTable]
 
 
-  def getAll: Future[List[NoteUpdateLog]] = {
-    db.run(logs.result).map(NoteUpdateLogConverter.makeFromSeq)
+  def getAll: Future[Seq[NoteUpdateLog]] = {
+    db.run(logs.result)
   }
 
-  def findByNoteId(noteId: Int): Future[List[NoteUpdateLog]] = {
-    db.run(logs.filter(_.noteId === noteId).result).map(NoteUpdateLogConverter.makeFromSeq)
+  def findByNoteId(noteId: Int): Future[Seq[NoteUpdateLog]] = {
+    db.run(logs.filter(_.noteId === noteId).result)
   }
 
   def create(log: NoteUpdateLog): Future[Int] = {
-    db.run(logs += (0, log.noteId, log.action, log.changed, log.newPassword, log.oldPassword))
+    db.run(logs += log)
   }
 
-  private class NoteUpdateLogsTable(tag: Tag) extends Table[(Int, Int, String, Timestamp, Option[String], Option[String])](tag, "note_update_log") {
+  private class NoteUpdateLogsTable(tag: Tag) extends Table[NoteUpdateLog](tag, "note_update_log") {
     def id = column[Int]("id", O.PrimaryKey) // This is the primary key column
 
     def noteId = column[Int]("note_id")
@@ -42,15 +42,6 @@ class NoteUpdateLogDAO @Inject()(protected val dbConfigProvider: DatabaseConfigP
 
     def oldPassword = column[Option[String]]("old_password")
 
-    def * = (id, noteId, action, changed, newPassword, oldPassword)
-  }
-
-  private object NoteUpdateLogConverter {
-    def makeFromSeq(rows: Seq[(Int, Int, String, Timestamp, Option[String], Option[String])]): List[NoteUpdateLog] = {
-      rows.map {
-        case (id, noteId, action, changed, newPassword, oldPassword) =>
-          NoteUpdateLog(Option(id), noteId, action, changed, newPassword, oldPassword)
-      }.toList
-    }
+    def * = (id, noteId, action, changed, newPassword, oldPassword) <> ((NoteUpdateLog.apply _).tupled, NoteUpdateLog.unapply)
   }
 }
