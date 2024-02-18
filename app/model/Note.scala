@@ -18,10 +18,12 @@ object Note {
         Note(name = name, password = password)
       }
 
-    override def writes(o: Note): JsValue =
+    override def writes(note: Note): JsValue =
       Json.obj(
-        "name" -> o.name,
-        "password" -> o.password
+        "id" -> note.id,
+        "name" -> note.name,
+        "password" -> note.password,
+        "lastChanged" -> note.lastChanged
       )
   }
 }
