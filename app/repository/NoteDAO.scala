@@ -28,7 +28,7 @@ class NoteDAO @Inject()(protected val dbConfigProvider: DatabaseConfigProvider)
   }
 
   def findAllByName(name: String): Future[Seq[Note]] = {
-    db.run(notes.filter(_.name like name).result)
+    db.run(notes.filter(_.name like s"%${name}%").result)
   }
 
   def delete(id: Int): Future[Int] = {
