@@ -41,11 +41,8 @@ class NoteDAO @Inject()(protected val dbConfigProvider: DatabaseConfigProvider)
 
   private class NotesTable(tag: Tag) extends Table[Note](tag, "note") {
     def id = column[Int]("id", O.PrimaryKey, O.AutoInc)
-
     def name = column[String]("name")
-
     def password = column[String]("password")
-
     def lastChanged = column[Timestamp]("last_changed")
 
     def * = (id, name, password, lastChanged) <> ((Note.apply _).tupled, Note.unapply)

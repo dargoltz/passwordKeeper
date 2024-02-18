@@ -30,16 +30,11 @@ class NoteUpdateLogDAO @Inject()(protected val dbConfigProvider: DatabaseConfigP
   }
 
   private class NoteUpdateLogsTable(tag: Tag) extends Table[NoteUpdateLog](tag, "note_update_log") {
-    def id = column[Int]("id", O.PrimaryKey) // This is the primary key column
-
+    def id = column[Int]("id", O.PrimaryKey, O.AutoInc)
     def noteId = column[Int]("note_id")
-
     def action = column[String]("action")
-
     def changed = column[Timestamp]("changed")
-
     def newPassword = column[Option[String]]("new_password")
-
     def oldPassword = column[Option[String]]("old_password")
 
     def * = (id, noteId, action, changed, newPassword, oldPassword) <> ((NoteUpdateLog.apply _).tupled, NoteUpdateLog.unapply)
