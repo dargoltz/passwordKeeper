@@ -44,13 +44,15 @@ class NoteService @Inject()(
   }
 
   def deleteNote(id: Int): Future[Unit] = {
-    notesRepository.getById(id).map { maybeFoundNote =>
-      maybeFoundNote.foreach { foundNote =>
+    notesRepository.getById(id).flatMap { maybeFoundNote =>
+      maybeFoundNote.map { foundNote =>
         notesRepository.delete(id).flatMap { _ =>
           updateHistoryLogRepository.create(
             NoteUpdateLog(0, id, "DELETE", getTimeStamp(), None, Some(foundNote.password))
-          )
+          ).map(_ => ())
         }
+      }.getOrElse {
+        Future.successful(())
       }
     }
   }
