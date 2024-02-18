@@ -14,6 +14,5 @@ CREATE TABLE IF NOT EXISTS note_update_log
     changed      TIMESTAMP NOT NULL,
     new_password  VARCHAR(255),
     old_password VARCHAR(255),
-    FOREIGN KEY (note_id) REFERENCES note (id),
-    CONSTRAINT unique_note_id UNIQUE (note_id)
+    FOREIGN KEY (note_id) REFERENCES note (id)
 );
