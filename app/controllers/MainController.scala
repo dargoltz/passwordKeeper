@@ -9,7 +9,6 @@ import service.{NoteService, NoteUpdateLogService}
 import javax.inject._
 import scala.concurrent.{ExecutionContext, Future}
 
-@Singleton
 class MainController @Inject()(
                                 val controllerComponents: ControllerComponents,
                                 val notesService: NoteService,
