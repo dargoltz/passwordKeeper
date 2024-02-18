@@ -1,0 +1,11 @@
+GET         /search_notes/:name             controllers.MainController.getNotes(name: String)
+
+POST        /new                            controllers.MainController.createNote()
+GET         /update_notes/WithParams        controllers.MainController.updateNote(id: Int, password: String )
+GET         /delete_notes/:id               controllers.MainController.deleteNote(id: Int)
+
+GET         /all_history/                   controllers.MainController.getHistoryLogAll()
+GET         /history/:noteId                controllers.MainController.getHistoryLogByNoteId(noteId: Int)
+
+GET         /import_csv                     controllers.MainController.importNotes()
+POST        /export_csv                     controllers.MainController.exportNotes()
