@@ -1,7 +1,7 @@
 package service
 
 import model.{Note, NoteUpdateLog}
-import repository.{NoteRepository, NoteUpdateLogDAO}
+import repository.{NoteDAO, NoteUpdateLogDAO}
 import util.CSVHandler
 
 import java.io.File
@@ -13,42 +13,56 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 class NoteService @Inject()(
-                             notesRepository: NoteRepository,
+                             notesRepository: NoteDAO,
                              updateHistoryLogRepository: NoteUpdateLogDAO
                            ) {
 
   private val csvHandler = new CSVHandler()
 
-  def getNotes(name: String): List[Note] = {
-    notesRepository.findByName(name)
+  def getNotes(name: String): Future[Seq[Note]] = {
+    notesRepository.findAllByName(name)
   }
 
-  def createNote(note: Note): Unit = {
-    notesRepository.createAndGetId(note) match {
-      case Some(noteId) =>
-        updateHistoryLogRepository.create(NoteUpdateLog(None, noteId, "CREATE", note.lastChanged, Some(note.password), None))
+  def create(note: Note): Future[Int] = {
+    notesRepository.create(note).flatMap { noteId =>
+      updateHistoryLogRepository.create(
+        NoteUpdateLog(0, noteId, "CREATE", getTimeStamp(), Some(note.password), None)
+      )
     }
   }
 
-  def updateNotePassword(id: Int, password: String): Unit = {
-    notesRepository.getById(id) match {
-      case Some(foundNote) =>
-        notesRepository.updatePasswordById(id, password)
-        updateHistoryLogRepository.create(NoteUpdateLog(None, id, "UPDATE", getTimeStamp(), Some(password), Some(foundNote.password)))
+  def updateNotePassword(id: Int, newPassword: String): Future[Unit] = {
+    notesRepository.getById(id).map { maybeFoundNote =>
+      maybeFoundNote.foreach { foundNote =>
+        notesRepository.updatePasswordById(id, newPassword).flatMap { _ =>
+          updateHistoryLogRepository.create(
+            NoteUpdateLog(0, id, "UPDATE", getTimeStamp(), Some(newPassword), Some(foundNote.password))
+          )
+        }
+      }
     }
   }
 
   def deleteNote(id: Int): Unit = {
-    notesRepository.getById(id) match {
-      case Some(foundNote) =>
-        notesRepository.delete(id)
-        updateHistoryLogRepository.create(NoteUpdateLog(None, id, "DELETE", getTimeStamp(), None, Some(foundNote.password)))
+    notesRepository.getById(id).map { maybeFoundNote =>
+      maybeFoundNote.foreach { foundNote =>
+        notesRepository.delete(id).flatMap { _ =>
+          updateHistoryLogRepository.create(
+            NoteUpdateLog(0, id, "DELETE", getTimeStamp(), None, Some(foundNote.password))
+          )
+        }
+      }
     }
   }
 
-  def exportToSCV(): File = {
-    val newFile = File.createTempFile("export", ".csv")
-    csvHandler.writeData(newFile, notesRepository.getAll.map(note => note.toList))
+  def exportToSCV(): Future[File] = {
+    val newFile = File.createTempFile("notes", ".csv")
+    val notes = notesRepository.getAll.map { notesSeq =>
+      notesSeq.map { note =>
+        List(note.name, note.password, note.lastChanged.toString)
+      }.toList
+    }
+    csvHandler.writeData(newFile, notes)
   }
 
   def importFromCSV(inputFile: File): Future[Unit] = {
@@ -56,7 +70,7 @@ class NoteService @Inject()(
     Future {
       data.map { line =>
         try {
-          notesRepository.createAndGetId(makeNoteFromLine(line))
+          notesRepository.create(makeNoteFromLine(line))
         } catch {
           case _: Exception =>
           // я обязательно всё обработаю

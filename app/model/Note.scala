@@ -5,11 +5,7 @@ import play.api.libs.json.{Format, JsResult, JsValue, Json}
 import java.sql.Timestamp
 import java.time.LocalDateTime
 
-case class Note(id: Option[Int] = None, name: String, password: String, lastChanged: Timestamp = Timestamp.valueOf(LocalDateTime.now)) {
-  def toList: List[String] = {
-    List(id.toString, name, password, lastChanged.toString)
-  }
-}
+case class Note(id: Option[Int] = None, name: String, password: String, lastChanged: Timestamp = Timestamp.valueOf(LocalDateTime.now))
 
 object Note {
 

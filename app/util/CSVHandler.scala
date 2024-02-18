@@ -1,9 +1,12 @@
 package util
 
 import com.opencsv.{CSVReader, CSVWriter}
+import model.Note
 
 import java.io._
+import scala.concurrent.{ExecutionContext, Future}
 import scala.jdk.CollectionConverters.CollectionHasAsScala
+
 class CSVHandler {
 
   def getData(csvFile: File): List[List[String]] = {
@@ -13,10 +16,15 @@ class CSVHandler {
     lines
   }
 
-  def writeData(csvFile: File, data: List[List[String]]): File = {
-    val writer = new CSVWriter(new FileWriter(csvFile))
-    data.map(_.toArray).foreach(writer.writeNext)
-    writer.close()
-    csvFile
+  def writeData(csvFile: File, inputData: Future[List[List[String]]])(implicit ec: ExecutionContext): Future[File] = {
+    inputData.map { data =>
+      val writer = new CSVWriter(new FileWriter(csvFile))
+      try {
+        data.foreach(row => writer.writeNext(row.toArray))
+      } finally {
+        writer.close()
+      }
+      csvFile
+    }
   }
 }
