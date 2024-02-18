@@ -12,6 +12,6 @@ lazy val root = (project in file("."))
       "com.opencsv" % "opencsv" % "5.7.1",
       "org.flywaydb" %% "flyway-play" % "7.37.0",
       "org.postgresql" % "postgresql" % "42.5.4",
-      "io.getquill" %% "quill-jdbc-zio" % "4.8.0",
+      "com.typesafe.play" %% "play-slick" % "5.2.0",
     )
   )
