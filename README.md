@@ -1,4 +1,4 @@
-This is PasswordKeeper - my first Json Rest Api on Scala
+This is PasswordKeeper - Json Rest Api
 
 This API allows you:
 - Perform CRUD operations on your password records.
@@ -14,4 +14,6 @@ Stack:
 - Postgresql 42.5.4
 
 Installing:
-- todo
+- Create postgres db with docker-compose.yml
+- Run conf/db/migration/Init_CreateTable.sql after connecting database
+- sbt run
