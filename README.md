@@ -17,3 +17,6 @@ Installing:
 - Create postgres db with docker-compose.yml
 - Run conf/db/migration/Init_CreateTable.sql after connecting database
 - sbt run
+
+More about me:
+https://github.com/dargoltz
