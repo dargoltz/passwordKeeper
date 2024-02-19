@@ -58,18 +58,19 @@ class MainController @Inject()(
     }
   }
 
+  // todo not working
   def importNotes: Action[MultipartFormData[Files.TemporaryFile]] = Action.async(parse.multipartFormData) { request =>
     val csvFiles = request.body.files.filter { filePart =>
       filePart.filename.endsWith(".csv")
     }
     if (csvFiles.isEmpty) {
-      Future.successful(BadRequest("Файл CSV не найден"))
+      Future.successful(BadRequest("CSV files not found"))
     }
     val importResult = csvFiles.map { csvFile =>
       notesService.importFromCSV(csvFile.ref)
     }
     Future.sequence(importResult).map { _ =>
-      Ok("Импорт завершен успешно")
+      Ok("Import completed")
     }
   }
 

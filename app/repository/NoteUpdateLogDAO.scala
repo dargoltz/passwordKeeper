@@ -7,10 +7,9 @@ import slick.lifted
 
 import java.sql.Timestamp
 import javax.inject.Inject
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.Future
 
-class NoteUpdateLogDAO @Inject()(protected val dbConfigProvider: DatabaseConfigProvider)
-                                (implicit ec: ExecutionContext) extends HasDatabaseConfigProvider[JdbcProfile] {
+class NoteUpdateLogDAO @Inject()(protected val dbConfigProvider: DatabaseConfigProvider) extends HasDatabaseConfigProvider[JdbcProfile] {
 
   import profile.api._
 

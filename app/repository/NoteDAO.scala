@@ -6,10 +6,9 @@ import slick.jdbc.JdbcProfile
 
 import java.sql.Timestamp
 import javax.inject.Inject
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.Future
 
-class NoteDAO @Inject()(protected val dbConfigProvider: DatabaseConfigProvider)
-                       (implicit ec: ExecutionContext) extends HasDatabaseConfigProvider[JdbcProfile] {
+class NoteDAO @Inject()(protected val dbConfigProvider: DatabaseConfigProvider) extends HasDatabaseConfigProvider[JdbcProfile] {
 
   import profile.api._
 
@@ -41,8 +40,11 @@ class NoteDAO @Inject()(protected val dbConfigProvider: DatabaseConfigProvider)
 
   private class NotesTable(tag: Tag) extends Table[Note](tag, "note") {
     def id = column[Int]("id", O.PrimaryKey, O.AutoInc)
+
     def name = column[String]("name")
+
     def password = column[String]("password")
+
     def lastChanged = column[Timestamp]("last_changed")
 
     def * = (id, name, password, lastChanged) <> ((Note.apply _).tupled, Note.unapply)

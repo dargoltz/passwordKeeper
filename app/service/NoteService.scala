@@ -67,15 +67,16 @@ class NoteService @Inject()(
     csvHandler.writeData(newFile, notes)
   }
 
+  // todo not working
   def importFromCSV(inputFile: File): Future[Unit] = {
     val data = csvHandler.getData(inputFile)
     Future {
       data.map { line =>
         try {
-          notesRepository.create(makeNoteFromLine(line))
+          createNote(makeNoteFromLine(line))
         } catch {
           case _: Exception =>
-          // я обязательно всё обработаю
+          // todo
         }
       }
     }

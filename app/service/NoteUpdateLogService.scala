@@ -6,7 +6,6 @@ import repository.NoteUpdateLogDAO
 import javax.inject.Inject
 import scala.concurrent.Future
 
-
 class NoteUpdateLogService @Inject()(
                                       val noteUpdateLogRepository: NoteUpdateLogDAO
                                     ) {

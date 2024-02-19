@@ -26,5 +26,4 @@ class CSVHandler {
       }
       csvFile
     }
-  }
-}
+  }}
